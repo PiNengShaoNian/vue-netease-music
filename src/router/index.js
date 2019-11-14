@@ -1,28 +1,31 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
-Vue.use(VueRouter);
+const Discovery = () => import('@/page/discovery')
 
-const routes = [
+Vue.use(VueRouter)
+
+export const menuRoutes = [
   {
-    path: "/",
-    name: "home",
-    component: Home
-  },
-  {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+    path: '/discovery',
+    name: 'discovery',
+    component: Discovery,
+    meta: {
+      title: '发现音乐',
+      icon: 'music'
+    }
   }
-];
+]
 
-const router = new VueRouter({
-  routes
-});
+export const layoutCenterNames = ['discovery', 'playlists', 'songs', 'mvs']
 
-export default router;
+export default new VueRouter({
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      redirect: '/discovery'
+    },
+    ...menuRoutes
+  ]
+})
