@@ -1,5 +1,5 @@
-import { isDef } from './common'
-import { getAlbum } from '@/api'
+import { isDef, notify } from './common'
+import { getAlbum, getMvDetail } from '@/api'
 
 const genSongPlayUrl = id => {
   return `https://music.163.com/song/media/outer/url?id=${id}.mp3`
@@ -49,5 +49,13 @@ export function createSong(song) {
     // mv的id 如果有的话 会在songTable组件中加上mv链接。
     mvId,
     ...rest
+  }
+}
+
+export async function goMvWithCheck(id) {
+  try {
+    await getMvDetail(id)
+  } catch  {
+    notify('mv获取失败')
   }
 }

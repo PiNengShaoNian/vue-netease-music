@@ -18,7 +18,7 @@ export default {
     }
 
     commit('setCurrentSong', song)
-    commit('setPlayingSate', true)
+    commit('setPlayingState', true)
 
     const { playHistory } = state
     const playHistoryCopy = playHistory.slice()
