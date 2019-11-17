@@ -26,5 +26,8 @@ export default {
         state.isPlaylistPromptShow = false
       }, 2000)
     }
+  },
+  setMenuShow(state, show) {
+    state.isMenuShow = show
   }
 }

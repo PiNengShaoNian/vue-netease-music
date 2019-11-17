@@ -1,5 +1,6 @@
 import { isDef, notify } from './common'
 import { getAlbum, getMvDetail } from '@/api'
+import router from '@/router'
 
 const genSongPlayUrl = id => {
   return `https://music.163.com/song/media/outer/url?id=${id}.mp3`
@@ -52,9 +53,14 @@ export function createSong(song) {
   }
 }
 
+export function goMv(id) {
+  router.push(`/mv/${id}`)
+}
+
 export async function goMvWithCheck(id) {
   try {
     await getMvDetail(id)
+    goMv(id)
   } catch  {
     notify('mv获取失败')
   }

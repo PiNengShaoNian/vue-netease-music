@@ -1,5 +1,5 @@
 <template>
-  <div class="playlists" ref="playlists">
+  <div class="playlists" ref= "playlists">
     <div class="top-play-list-card" v-if="topPlaylist.id">
       <TopPlaylistCard
         :desc="topPlaylist.description"
@@ -27,13 +27,20 @@
         v-for="item in playlists"
       />
     </div>
+    <Pagination
+      :current-page.sync="currentPage"
+      :page-size="PAGE_SIZE"
+      :total="total"
+      @current-change="onPageChange"
+      class="patination"
+    />
   </div>
 </template>
 
 <script>
 import TopPlaylistCard from '@/components/top-playlist-card'
 import PlaylistCard from '@/components/playlist-card'
-import { getPageOffset } from '@/utils'
+import { getPageOffset, scrollInto } from '@/utils'
 import { getTopPlaylists, getPlaylists } from '@/api'
 const PAGE_SIZE = 50
 
@@ -54,20 +61,20 @@ export default {
   async created() {
     this.PAGE_SIZE = PAGE_SIZE
     this.tabs = [
-      "全部",
-      "欧美",
-      "华语",
-      "流行",
-      "说唱",
-      "摇滚",
-      "民谣",
-      "电子",
-      "轻音乐",
-      "影视原声",
-      "ACG",
-      "怀旧",
-      "治愈",
-      "旅行"
+      '全部',
+      '欧美',
+      '华语',
+      '流行',
+      '说唱',
+      '摇滚',
+      '民谣',
+      '电子',
+      '轻音乐',
+      '影视原声',
+      'ACG',
+      '怀旧',
+      '治愈',
+      '旅行'
     ]
     this.initData()
   },
@@ -75,6 +82,11 @@ export default {
     async initData() {
       this.getTopPlaylists()
       this.getPlaylists()
+    },
+    async onPageChange(page) {
+      this.currentPage = page
+      this.getPlaylists()
+      scrollInto(this.$refs.playlists)
     },
     async getTopPlaylists() {
       const { playlists } = await getTopPlaylists({

@@ -4,15 +4,17 @@
       <img :src="$utils.genImgUrl(img, 500, 260)" alt />
       <div class="play-count-wrap" v-if="playCount">
         <Icon type="play" />
-        {{$utils.formatNumber(playCount)}}
+        {{ $utils.formatNumber(playCount) }}
       </div>
       <div class="play-icon-wrap">
         <PlayIcon :size="48" class="play-icon" />
       </div>
-      <div class="duration-wrap" v-if="duration">{{$utils.formatTime(duration / 1000)}}</div>
+      <div class="duration-wrap" v-if="duration">
+        {{ $utils.formatTime(duration / 1000) }}
+      </div>
     </div>
-    <p class="name" v-if="name">{{name}}</p>
-    <p class="author" v-if="author">{{author}}</p>
+    <p class="name" v-if="name">{{ name }}</p>
+    <p class="author" v-if="author">{{ author }}</p>
   </div>
 </template>
 
