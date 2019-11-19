@@ -7,6 +7,10 @@ const PlayLists = () => import('@/page/playlists')
 const Songs = () => import('@/page/songs')
 const Mvs = () => import('@/page/mvs')
 const Mv = () => import('@/page/mv')
+const SearchSongs = () => import('@/page/search/songs')
+const Search = () => import('@/page/search')
+const SearchMvs = () => import('@/page/search/mvs')
+const SearchPlaylists = () => import('@/page/search/playlists')
 
 Vue.use(VueRouter)
 
@@ -67,7 +71,34 @@ export default new VueRouter({
       path: '/mv/:id',
       name: 'searchMvs',
       component: Mv,
-      props: (route) => ({id: +route.params.id})
+      props: route => ({ id: +route.params.id })
+    },
+    {
+      path: '/search/:keywords',
+      name: 'search',
+      component: Search,
+      props: true,
+      children: [
+        {
+          path: '/',
+          redirect: 'songs'
+        },
+        {
+          path: 'songs',
+          name: 'searchSongs',
+          component: SearchSongs
+        },
+        {
+          path: 'mvs',
+          name: 'searchMvs',
+          component: SearchMvs
+        },
+        {
+          path: 'playlists',
+          name: 'searchPlaylists',
+          component: SearchPlaylists
+        }
+      ]
     },
     ...menuRoutes
   ]

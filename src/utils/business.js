@@ -61,7 +61,8 @@ export async function goMvWithCheck(id) {
   try {
     await getMvDetail(id)
     goMv(id)
-  } catch  {
+  } catch {
     notify('mv获取失败')
   }
 }
+

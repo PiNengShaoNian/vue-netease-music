@@ -2,9 +2,14 @@
   <div class="theme">
     <el-popover placement="top" v-model="visible" width="230">
       <div class="themes">
-        <div class="theme-item" :key="index" v-for="(themeValue, themeKey, index) in themeMap">
-          <div class="theme-icon" :style="themeValue.style"/>
-          <p>{{themeValue.title}}</p>
+        <div
+          class="theme-item"
+          :key="index"
+          @click="changeTheme(themeKey)"
+          v-for="(themeValue, themeKey, index) in themeMap"
+        >
+          <div class="theme-icon" :style="themeValue.style" />
+          <p>{{ themeValue.title }}</p>
         </div>
       </div>
       <Icon :backdrop="true" slot="reference" type="skin" />

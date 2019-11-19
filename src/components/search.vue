@@ -9,12 +9,68 @@
       ref="input"
       v-model.trim="searchKeyword"
     />
+
+    <Toggle :reserveDoms="[$refs.input && $refs.input.$el]" :show.sync="searchPanelShow">
+      <div class="search-panel" v-show="searchPanelShow">
+        <div class="search-suggest" v-if="suggestShow">
+          <div
+            class="suggest-item"
+            :key="index"
+            v-for="(normalizedSuggest, index) in normalizedSuggests"
+          >
+            <div class="title">
+              <Icon :size="12" :type="normalizedSuggest.icon" />
+              {{normalizedSuggest.title}}
+            </div>
+            <ul class="list">
+              <li
+                :key="item.id"
+                @click="normalizedSuggest.onClick(item)"
+                class="item"
+                v-for="item in normalizedSuggest.data"
+              >
+                <HighlightText
+                  :highlightText="searchKeyword"
+                  :text="normalizedSuggest.renderName ? normalizedSuggest.renderName(item) : item.name"
+                />
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="search-hots" v-else>
+          <div class="block">
+            <div class="title">热门搜索</div>
+            <div class="tags">
+              <NButton
+                :key="index"
+                @click="onClickHot(hot)"
+                class="button"
+                v-for="(hot, index) in searchHots"
+              >{{hot.first}}</NButton>
+            </div>
+          </div>
+          <div class="block">
+            <div class="title">搜索历史</div>
+            <div class="tags" v-if="searchHistorys.length">
+              <NButton
+                :key="index"
+                @click="onClickHot(history)"
+                class="button"
+                v-for="(history, index) in searchHistorys"
+              >{{history.first}}</NButton>
+            </div>
+            <div class="empty" v-else>暂无搜索历史</div>
+          </div>
+        </div>
+      </div>
+    </Toggle>
   </div>
 </template>
 
 <script>
 import storage from 'good-storage'
-import { debounce } from '@/utils'
+import { mapActions, mapMutations } from '@/store/helper/music'
+import { debounce, genArtistisText, createSong } from '@/utils'
 import { getSearchHot, getSearchSuggest } from '@/api'
 const SEARCH_HISTORY_KEY = '__SEARCH_HISTORY__'
 export default {
@@ -23,7 +79,9 @@ export default {
       searchPanelShow: false,
       searchKeyword: '',
       searchHots: [],
-      searchHistorys: storage.get(SEARCH_HISTORY_KEY, [])
+      searchHistorys: storage.get(SEARCH_HISTORY_KEY, []),
+      suggest: {},
+      reserveDoms: []
     }
   },
   async created() {
@@ -31,6 +89,43 @@ export default {
       result: { hots }
     } = await getSearchHot()
     this.searchHots = hots
+  },
+  computed: {
+    normalizedSuggests() {
+      return [
+        {
+          title: '单曲',
+          icon: 'music',
+          data: this.suggest.songs,
+          renderName(song) {
+            return `${song.name} - ${genArtistisText(song.artistis)}`
+          },
+          onClick: this.onClickSong.bind(this)
+        },
+        {
+          title: '歌单',
+          icon: 'playlist',
+          data: this.suggest.playlists,
+          onClick: this.onClickPlaylist.bind(this)
+        },
+        {
+          title: 'mv',
+          icon: 'mv',
+          data: this.suggest.mvs,
+          renderName(mv) {
+            return `${mv.name} - ${genArtistisText(mv.artistis)}`
+          },
+          onClick: this.onClickMv.bind(this)
+        }
+      ].filter(item => item.data && item.data.length)
+    },
+    suggestShow() {
+      return (
+        this.searchKeyword.length && ['songs', 'playlists'].find(key => {
+          return this.suggest[key] && this.suggest[key].length
+        })
+      )
+    }
   },
   methods: {
     onClickInput() {
@@ -58,7 +153,43 @@ export default {
       storage.set(SEARCH_HISTORY_KEY, this.searchHistorys)
       this.$router.push(`/search/${keywords}`)
       this.searchPanelShow = false
-    }
+    },
+    async onClickSong(item) {
+      const {
+        id,
+        name,
+        artists,
+        duration,
+        mvid,
+        album: { id: albumId, name: albumName }
+      } = item
+      const song = createSong({
+        id,
+        name,
+        artists,
+        duration,
+        albumId,
+        albumName,
+        mvId: mvid
+      })
+      this.startSong(song)
+      this.addToPlaylist(song)
+    },
+    onClickPlaylist(item) {
+      const { id } = item
+      this.$router.push(`/playlist/${id}`)
+      this.searchPanelShow = false
+    },
+    onClickMv(mv) {
+      const { id } = mv
+      this.$router.push(`/mv/${id}`)
+    },
+    onClickHot(hot) {
+      const { first } = hot
+      this.goSearch(first)
+    },
+    ...mapMutations(['setPlaylist']),
+    ...mapActions(['startSong', 'addToPlaylist'])
   }
 }
 </script>

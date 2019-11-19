@@ -10,6 +10,9 @@ export default {
   setPlayingState(state, playing) {
     state.playing = playing
   },
+  setPlayMode(state, mode) {
+    state.playMode = mode
+  },
   setPlayHistory(state, history) {
     state.playHistory = history
   },
@@ -29,5 +32,8 @@ export default {
   },
   setMenuShow(state, show) {
     state.isMenuShow = show
+  },
+  setPlaylistShow(state, show) {
+    state.isPlaylistShow = show
   }
 }

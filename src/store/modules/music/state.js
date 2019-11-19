@@ -1,6 +1,6 @@
 import storage from 'good-storage'
 import { PLAY_HISTORY_KEY } from '@/utils'
-// import { playModeMap } from '@/utils/config'
+import { playModeMap } from '@/utils/config'
 
 export default {
   isPlayerShow: false,
@@ -9,5 +9,8 @@ export default {
   currentSong: {},
   playing: false,
   playHistory: storage.get(PLAY_HISTORY_KEY, []),
-  currentTime: 0
+  currentTime: 0,
+  playMode: playModeMap.sequence.code,
+  isPlaylistShow: false,
+  isPlaylistPromptShow: false
 }

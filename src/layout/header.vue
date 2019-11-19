@@ -35,7 +35,7 @@ import { requestFullScreen, exitFullscreen, isFullscreen } from '@/utils'
 import RoutesHistory from '@/components/routes-history'
 import Theme from '@/components/theme'
 import Search from '@/components/search'
-import { mapState } from "@/store/helper/music"
+import { mapState, mapMutations } from "@/store/helper/music"
 
 export default {
   components: { RoutesHistory, Theme, Search },
@@ -50,7 +50,11 @@ export default {
       if (isFullscreen()) {
         exitFullscreen()
       }
-    }
+    },
+    onClickDown() {
+      this.setPlayerShow(false)
+    },
+    ...mapMutations(['setPlayerShow'])
   },
   computed: {
     ...mapState(['isPlayerShow'])
